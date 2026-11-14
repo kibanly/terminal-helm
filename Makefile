@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · every way to run the installer, as make targets
+#  terminal-helm · every way to run the installer, as make targets
 #    make              this list
 #    make install      install what is missing (and `update` when installed already)
 #    YES=1             no questions, e.g.  make install YES=1
@@ -13,7 +13,7 @@ YES_FLAG := $(if $(filter 1 yes true,$(YES)),--yes,)
 .PHONY: help install update install-no-update config dry-run uninstall doctor files monitor check test smoke test-install bench release version
 
 help: ## this list
-	@printf '\n  \033[1mterminal-setup\033[0m · make <target>   \033[2m(YES=1: no questions)\033[0m\n\n'
+	@printf '\n  \033[1mterminal-helm\033[0m · make <target>   \033[2m(YES=1: no questions)\033[0m\n\n'
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
 	  awk -F':.*## ' '{ printf "    \033[36m%-18s\033[0m %s\n", $$1, $$2 }'
 	@printf '\n'
@@ -32,7 +32,7 @@ config: ## only the config files (no packages, font, plugins, update)
 dry-run: ## show what install would do, changing nothing
 	./install.sh --dry-run --yes
 
-uninstall: ## take the terminal-setup lines out of ~/.zshrc, ~/.tmux.conf and ~/.zshenv
+uninstall: ## take the terminal-helm lines out of ~/.zshrc, ~/.tmux.conf and ~/.zshenv
 	./uninstall.sh $(YES_FLAG)
 
 doctor: ## check the installation (versions, config, plugins, font)
@@ -78,5 +78,5 @@ release: ## tag a version: make release VERSION=1.2.0 (CHANGELOG.md needs its se
 	@grep -Eq '^## \[$(subst .,\.,$(VERSION))\] — [0-9]{4}-[0-9]{2}-[0-9]{2}$$' CHANGELOG.md || \
 	  { echo "✘ CHANGELOG.md needs a section \"## [$(VERSION)] — YYYY-MM-DD\" (with the date: \"sin publicar\" is not one)"; exit 1; }
 	@$(MAKE) --no-print-directory check test
-	@git tag -a "v$(VERSION)" -m "terminal-setup $(VERSION)"
+	@git tag -a "v$(VERSION)" -m "terminal-helm $(VERSION)"
 	@echo "✔ tagged v$(VERSION) · publish it: git push origin $$(git branch --show-current) v$(VERSION)"

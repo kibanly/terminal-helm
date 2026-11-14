@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · packages on Ubuntu 24.04 / 26.04 (also inside WSL)
+#  terminal-helm · packages on Ubuntu 24.04 / 26.04 (also inside WSL)
 #  Only what is missing is installed. What Ubuntu's own version cannot do is
 #  fetched at the version this setup was tested with (install/versions.sh):
 #    tmux       ≥ 3.6   24.04 has 3.4      → built from source (install/tmux-build.sh)

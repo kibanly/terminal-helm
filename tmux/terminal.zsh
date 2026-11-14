@@ -8,7 +8,7 @@
 #  Sessions are created by hand: no project scanning.
 #
 #  Config (env vars):
-#    TERMINAL_NO_AUTOSTART=1  do not open tmux in new tabs (in ~/.zshrc, above the terminal-setup line)
+#    TERMINAL_NO_AUTOSTART=1  do not open tmux in new tabs (in ~/.zshrc, above the terminal-helm line)
 # ═══════════════════════════════════════════════════════════════
 
 emulate -L zsh
@@ -16,7 +16,7 @@ export TERMINAL_SETUP=${0:A:h:h}            # the repo (this file is in its tmux
 # a repo in a folder with spaces: its link without them (install/lib.sh: repo_path), or the commands
 # this builds for tmux and sh would cut the path at the space
 () {   # (a variable, not ${:-…}: there the - of the name is a token and :A gets a broken path)
-  local link=$HOME/.local/share/terminal-setup
+  local link=$HOME/.local/share/terminal-helm
   [[ $TERMINAL_SETUP == *[[:space:]]* && ${link:A} == $TERMINAL_SETUP ]] && TERMINAL_SETUP=$link
 }
 setopt extended_glob
@@ -338,7 +338,7 @@ rename() {
 help() {
   cat <<EOF
 
-  ${B}${C}▌ terminal${X}  ${D}tmux session manager · terminal-setup $(setup_version)${X}
+  ${B}${C}▌ terminal${X}  ${D}tmux session manager · terminal-helm $(setup_version)${X}
 
   ${B}COMMANDS${X}
     ${Y}terminal${X}                       session picker
@@ -352,7 +352,7 @@ help() {
     ${Y}terminal start${X} [name|system]   the session new terminals open ${D}(default: the system monitor)${X}
     ${Y}terminal guide${X}                 tmux guide ${D}(same as Ctrl+a ? inside tmux)${X}
     ${Y}terminal files${X}                 every file the install put on this machine, and what it is for
-    ${Y}terminal version${X}               which version of terminal-setup this is ${D}(CHANGELOG.md: what each one brought)${X}
+    ${Y}terminal version${X}               which version of terminal-helm this is ${D}(CHANGELOG.md: what each one brought)${X}
     ${Y}terminal help${X}                  this panel
 
   ${B}SESSIONS${X}  ${D}(${G}●${D} attached · ${M}▶${D} current)${X}
@@ -360,7 +360,7 @@ $(list)
 
   ${D}Inside tmux: ${X}${C}Ctrl+a Space${X}${D} quick menu · ${X}${C}Ctrl+a ?${X}${D} guide · ${X}${C}Ctrl+a s${X}${D} this picker${X}
   ${D}New terminals open: ${X}$(local l=$(start_get); print -r -- ${${l%%$TAB*}:-system})${D} · ${X}${C}terminal start NAME${X}${D} changes it (or Ctrl+s in the picker)${X}
-  ${D}Disable auto-start: add ${X}export TERMINAL_NO_AUTOSTART=1${D} to ~/.zshrc, above the terminal-setup line${X}
+  ${D}Disable auto-start: add ${X}export TERMINAL_NO_AUTOSTART=1${D} to ~/.zshrc, above the terminal-helm line${X}
 
 EOF
 }
@@ -422,7 +422,7 @@ case "$1" in
                     [[ -f $f ]] && awk -F'\t' -v o="$old" -v n="$new" 'BEGIN { OFS = FS } $1 == o { $1 = n } { print }' "$f" > "$f.tmp" \
                       && mv "$f.tmp" "$f" ;;
   help|h|-h|--help) help ;;
-  version|-v|--version) print -r -- "terminal-setup $(setup_version)" ;;
+  version|-v|--version) print -r -- "terminal-helm $(setup_version)" ;;
   # a session closed (any way: Ctrl+a X, its last tab or shell, the session tree…) · not at
   # kill-server or when tmux itself is ended: no hook runs then, and the descriptions come back
   _closed)          [[ -n $2 ]] && forget_description "$2" ;;

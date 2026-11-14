@@ -18,7 +18,7 @@ export TERMINAL_SETUP=${0:A:h:h}            # the repo (this file is in its tmux
 # a repo in a folder with spaces: its link without them (install/lib.sh: repo_path), or the commands
 # this builds for tmux and sh would cut the path at the space
 () {   # (a variable, not ${:-…}: there the - of the name is a token and :A gets a broken path)
-  local link=$HOME/.local/share/terminal-setup
+  local link=$HOME/.local/share/terminal-helm
   [[ $TERMINAL_SETUP == *[[:space:]]* && ${link:A} == $TERMINAL_SETUP ]] && TERMINAL_SETUP=$link
 }
 
@@ -181,7 +181,7 @@ terminal kill-all|Close every session but the system monitor · asks first, and 
 terminal start name|New terminals open that session (created in its folder if closed) · terminal start system: the monitor|@shell:$TERMINAL_SETUP/tmux/terminal.zsh start; read -sk "?press any key"
 terminal guide|This guide|
 terminal files|Every file the install put on this machine, and what it is for|@shell:bash $TERMINAL_SETUP/install/files.sh | less -R
-terminal version|Which version of terminal-setup this is · CHANGELOG.md says what each one brought|@shell:$TERMINAL_SETUP/tmux/terminal.zsh version; read -sk "?press any key"
+terminal version|Which version of terminal-helm this is · CHANGELOG.md says what each one brought|@shell:$TERMINAL_SETUP/tmux/terminal.zsh version; read -sk "?press any key"
 terminal help|Every command|@shell:$TERMINAL_SETUP/tmux/terminal.zsh help; read -sk "?press any key"
 @Shell|functions and aliases of zsh/functions.zsh and zsh/aliases.zsh
 update|Update everything: apt, snap, brew, uv, pnpm, Composer, Node LTS (fnm), tldr pages, plugins|
@@ -199,7 +199,7 @@ dps · dsh|Docker containers at a glance · open a shell in one|
 fkill|Pick processes with fzf and stop them|
 installed-packages|The packages you installed yourself, and why|
 pn · uvr|pnpm · uv run|
-@Settings|in your ~/.zshrc, above the terminal-setup line
+@Settings|in your ~/.zshrc, above the terminal-helm line
 export TERMINAL_NO_AUTOSTART=1|Do not open tmux in new tabs|
 EOF
 )

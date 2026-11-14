@@ -1,15 +1,15 @@
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · zsh  (sourced at the end of your ~/.zshrc: ./install.sh adds the line)
+#  terminal-helm · zsh  (sourced at the end of your ~/.zshrc: ./install.sh adds the line)
 #  Ubuntu 24.04 / 26.04, WSL and macOS. What only one system needs is in
 #  zsh/platform/<linux|wsl|macos>.zsh, loaded below. Your own things stay in ~/.zshrc:
-#  above the terminal-setup line they are loaded first, below it they win over this file.
+#  above the terminal-helm line they are loaded first, below it they win over this file.
 # ═══════════════════════════════════════════════════════════════
 
 export TERMINAL_SETUP=${${(%):-%x}:A:h:h}  # the repo: this file is its zsh/zshrc
 # a repo in a folder with spaces: its link without them (install/lib.sh: repo_path), or the commands
 # this builds for tmux and sh would cut the path at the space
 () {   # (a variable, not ${:-…}: there the - of the name is a token and :A gets a broken path)
-  local link=$HOME/.local/share/terminal-setup
+  local link=$HOME/.local/share/terminal-helm
   [[ $TERMINAL_SETUP == *[[:space:]]* && ${link:A} == $TERMINAL_SETUP ]] && TERMINAL_SETUP=$link
 }
 
@@ -133,6 +133,18 @@ if (( $+commands[starship] )); then
   _cached_init starship ${commands[starship]:A} starship init zsh --print-full-init
   # no right_format in the theme: no right prompt, so no second `starship prompt` per prompt
   [[ -r $STARSHIP_CONFIG && $(<$STARSHIP_CONFIG) == *right_format* ]] || unset RPROMPT
+  # JetBrains' terminal does not measure the line as starship does (the Nerd Font icons, its
+  # width), so $fill pushes the end of the line (the time…) off the edge: there the theme goes
+  # without $fill, the right part right after the left one (a copy, made again when it changes)
+  if [[ $TERMINAL_EMULATOR == JetBrains* && -r $STARSHIP_CONFIG ]]; then
+    _jb=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/starship-jetbrains.toml
+    if [[ ! -s $_jb || $STARSHIP_CONFIG -nt $_jb ]]; then
+      [[ -d ${_jb:h} ]] || mkdir -p ${_jb:h}
+      print -r -- "${$(<$STARSHIP_CONFIG)//\$fill/}" >| $_jb
+    fi
+    export STARSHIP_CONFIG=$_jb
+    unset _jb
+  fi
 fi
 (( $+commands[zoxide] )) && _cached_init zoxide ${commands[zoxide]:A} zoxide init zsh   # z <part of a folder> · zi: pick with fzf
 
@@ -195,9 +207,9 @@ fi
 
 # tmux in every new terminal window or tab, straight into the system monitor (Ctrl+a d
 # leaves tmux for this plain shell). Skipped inside tmux, nested shells, IDE terminals, SSH and Claude Code.
-# Disable with: export TERMINAL_NO_AUTOSTART=1 in ~/.zshrc, above the terminal-setup line
+# Disable with: export TERMINAL_NO_AUTOSTART=1 in ~/.zshrc, above the terminal-helm line
 # It starts at the first prompt, once all of ~/.zshrc has run: tmux (and the monitor) get
-# what you set below the terminal-setup line too. Only once: `exec zsh` after Ctrl+a d stays out.
+# what you set below the terminal-helm line too. Only once: `exec zsh` after Ctrl+a d stays out.
 if [[ -o interactive && -t 0 && -t 1 && -z $TMUX && $SHLVL == 1 && -z $TERMINAL_AUTOSTARTED
       && -z $TERMINAL_NO_AUTOSTART && -z $CLAUDECODE && -z $SSH_CONNECTION
       && $TERM_PROGRAM != vscode && $TERMINAL_EMULATOR != JetBrains* ]] \
@@ -205,7 +217,7 @@ if [[ -o interactive && -t 0 && -t 1 && -z $TMUX && $SHLVL == 1 && -z $TERMINAL_
   _terminal_autostart() {
     add-zsh-hook -d precmd _terminal_autostart
     unfunction _terminal_autostart
-    [[ -n $TERMINAL_NO_AUTOSTART ]] && return     # also when set below the terminal-setup line
+    [[ -n $TERMINAL_NO_AUTOSTART ]] && return     # also when set below the terminal-helm line
     export TERMINAL_AUTOSTARTED=1
     $TERMINAL_SETUP/tmux/terminal.zsh autostart
   }

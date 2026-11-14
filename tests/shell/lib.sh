@@ -29,9 +29,9 @@ for c in "3.6 3.6 yes" "3.6a 3.6 yes" "3.5 3.6 no" "3.10 3.9 yes" "3.9 3.10 no" 
 done
 
 # ─── paths ───
-is "repo_path without spaces" "$(repo_path /home/me/terminal-setup)" /home/me/terminal-setup
-is "repo_path with a space" "$(repo_path "/home/me/my repos/terminal-setup")" "$HOME/.local/share/terminal-setup"
-is "repo_path with a tab" "$(repo_path "$(printf '/a\tb')")" "$HOME/.local/share/terminal-setup"
+is "repo_path without spaces" "$(repo_path /home/me/terminal-helm)" /home/me/terminal-helm
+is "repo_path with a space" "$(repo_path "/home/me/my repos/terminal-helm")" "$HOME/.local/share/terminal-helm"
+is "repo_path with a tab" "$(repo_path "$(printf '/a\tb')")" "$HOME/.local/share/terminal-helm"
 is "tilde in home" "$(tilde "$HOME/x/y")" "~/x/y"
 is "tilde elsewhere" "$(tilde /etc/x)" /etc/x
 is "PATH has ~/.local/bin" "$(case ":$PATH:" in (*":$HOME/.local/bin:"*) echo yes ;; (*) echo no ;; esac)" yes   # ((: bash 3.2)
@@ -121,6 +121,19 @@ new="$HOME/.config/new/file"
 add_block "$new" "$(block_tmux)" >/dev/null
 is "a file that was not there: only the block" "$(cat "$new")" "$(block_tmux)"
 is "the tmux block names the repo" "$(grep -c '^TERMINAL_SETUP="/repo/two"$' "$new")" 1
+
+# ─── an install from before the rename (terminal-setup → terminal-helm) ───
+old="$HOME/.zshenv"
+printf 'export Z=1\n\n%s  (./uninstall.sh takes it out)\nskip_global_compinit=1\n%s\n' "$OLD_MARK_BEGIN" "$OLD_MARK_END" > "$old"
+mkdir -p "$OLD_BACKUPS/20260101-000000" "$HOME/.tmux"; echo b > "$OLD_BACKUPS/20260101-000000/x"
+echo .config/btop/btop.conf > "$OLD_COPIED_LIST"
+migrate_old_name >/dev/null
+is "old marks renamed" "$(grep -c "^$MARK_BEGIN" "$old") $(grep -c "^$MARK_END" "$old") $(grep -c 'terminal-setup' "$old")" "1 1 0"
+is "the lines between them kept" "$(block_in "$old" | sed -n 2p)" "skip_global_compinit=1"
+is "the old backups moved" "$(cat "${BACKUP_DIR%/*}/20260101-000000/x") $(yes_ test -e "$OLD_BACKUPS")" "b no"
+is "the old list of copies moved" "$(cat "$COPIED_LIST") $(yes_ test -e "$OLD_COPIED_LIST")" ".config/btop/btop.conf no"
+add_block "$old" "$(block_zshenv)" >/dev/null
+is "then the install sees its block: not added twice" "$(grep -c "^$MARK_BEGIN" "$old")" 1
 
 echo "$passed passed, $failed failed"
 [ "$failed" = 0 ]

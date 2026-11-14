@@ -28,4 +28,4 @@ jobs:
       - name: release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "terminal-setup ${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag
+        run: gh release create "$GITHUB_REF_NAME" --title "terminal-helm ${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag

@@ -1,10 +1,10 @@
 #!/bin/bash
 # shellcheck disable=SC2088   # the ~ in the PASS / FAIL labels is text
 # Runs inside a fresh Ubuntu container as the user "tester" (passwordless sudo), started by
-# run.sh, which copied the repo to "$HOME/my repos/terminal-setup" (a space on purpose).
+# run.sh, which copied the repo to "$HOME/my repos/terminal-helm" (a space on purpose).
 # Prints PASS/FAIL lines and what helps to read them; DONE at the end.
 set -u
-R="$HOME/my repos/terminal-setup"
+R="$HOME/my repos/terminal-helm"
 pass() { echo "PASS $*"; }
 failc() { echo "FAIL $*"; }
 check() { local what=$1; shift; if "$@" >/dev/null 2>&1; then pass "$what"; else failc "$what"; fi; }
@@ -18,9 +18,9 @@ echo "install rc=$rc in $(( $(date +%s) - t0 ))s"
 tail -25 ~/install1.log
 [ $rc = 0 ] && pass "install.sh --yes exits 0" || failc "install.sh --yes exits $rc"
 grep -q "checksum is not" ~/install1.log && failc "a checksum did not match" || pass "no checksum mismatch"
-check "repo link made (path has a space)" test -L "$HOME/.local/share/terminal-setup"
-check "~/.zshrc loads the repo through the link" grep -q 'source "'"$HOME"'/.local/share/terminal-setup/zsh/zshrc"' ~/.zshrc
-check "~/.tmux.conf has the link" grep -q "TERMINAL_SETUP=\"$HOME/.local/share/terminal-setup\"" ~/.tmux.conf
+check "repo link made (path has a space)" test -L "$HOME/.local/share/terminal-helm"
+check "~/.zshrc loads the repo through the link" grep -q 'source "'"$HOME"'/.local/share/terminal-helm/zsh/zshrc"' ~/.zshrc
+check "~/.tmux.conf has the link" grep -q "TERMINAL_SETUP=\"$HOME/.local/share/terminal-helm\"" ~/.tmux.conf
 check "login shell is zsh" sh -c 'getent passwd tester | grep -q zsh$'
 
 section "versions"
@@ -35,7 +35,7 @@ check "yq is mikefarah's" sh -c 'yq --version | grep -q mikefarah'
 section "zsh"
 out=$(zsh -ic 'echo TS=$TERMINAL_SETUP; type update extract rgf fe terminal >/dev/null && echo FUNCS-OK' 2>&1 </dev/null)
 echo "$out" | tail -5
-echo "$out" | grep -q "TS=$HOME/.local/share/terminal-setup" && pass "zsh TERMINAL_SETUP is the link" || failc "zsh TERMINAL_SETUP: $(echo "$out" | grep TS=)"
+echo "$out" | grep -q "TS=$HOME/.local/share/terminal-helm" && pass "zsh TERMINAL_SETUP is the link" || failc "zsh TERMINAL_SETUP: $(echo "$out" | grep TS=)"
 echo "$out" | grep -q FUNCS-OK && pass "zsh functions load" || failc "zsh functions"
 echo "$out" | grep -iqE "command not found|no such file|unknown option|parse error" && failc "zsh startup prints errors" || pass "zsh starts clean"
 mkdir -p ~/ex/src ~/ex/here && echo hola > ~/ex/src/a.txt && gzip -k ~/ex/src/a.txt
@@ -60,7 +60,7 @@ panes=$(tmux list-panes -s -t =system -F '#{@label}' 2>/dev/null | sort | tr '\n
 echo "labels: $panes"
 [ "$(tmux list-panes -s -t =system 2>/dev/null | wc -l)" -ge 20 ] && pass "system monitor built ($(tmux list-panes -s -t =system | wc -l) panes)" || failc "system monitor not built"
 cmds=$(tmux list-panes -s -t =system -F '#{pane_start_command}' | head -3)
-echo "$cmds" | grep -q "share/terminal-setup" && pass "pane commands use the link" || failc "pane commands: $cmds"
+echo "$cmds" | grep -q "share/terminal-helm" && pass "pane commands use the link" || failc "pane commands: $cmds"
 check "config loaded without errors" sh -c '! tmux show-messages 2>/dev/null | grep -iE "error|unknown|invalid"'
 tmux switch-client -c "$(tmux list-clients -F '#{client_name}' | head -1)" -t =system 2>/dev/null
 for w in info monitor disk packages ssh docker git; do
@@ -107,13 +107,13 @@ section "install again (update mode, idempotent)"
 cd "$R" && ./install.sh --yes > ~/install2.log 2>&1; rc=$?
 grep -E "Update|update" ~/install2.log | head -3
 [ $rc = 0 ] && pass "second install exits 0" || { failc "second install rc=$rc"; tail -15 ~/install2.log; }
-[ "$(grep -c 'terminal-setup' ~/.zshrc)" -le 3 ] && pass "~/.zshrc block not duplicated" || failc "~/.zshrc duplicated"
+[ "$(grep -c 'terminal-helm' ~/.zshrc)" -le 3 ] && pass "~/.zshrc block not duplicated" || failc "~/.zshrc duplicated"
 
 section "uninstall"
 tmux kill-server 2>/dev/null
 cd "$R" && ./uninstall.sh --yes > ~/uninstall.log 2>&1; rc=$?
 tail -8 ~/uninstall.log
 [ $rc = 0 ] && pass "uninstall exits 0" || failc "uninstall rc=$rc"
-check "link removed" test ! -e "$HOME/.local/share/terminal-setup"
-check "~/.tmux.conf gone or without the block" sh -c '! grep -q terminal-setup ~/.tmux.conf 2>/dev/null'
+check "link removed" test ! -e "$HOME/.local/share/terminal-helm"
+check "~/.tmux.conf gone or without the block" sh -c '! grep -q terminal-helm ~/.tmux.conf 2>/dev/null'
 echo DONE

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2088  # "~/…" in messages is text to show, not a path
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · check that everything is in place (run by install.sh, or alone:
+#  terminal-helm · check that everything is in place (run by install.sh, or alone:
 #  bash install/doctor.sh). ✔ fine · ✘ needed and missing / too old · – optional
 # ═══════════════════════════════════════════════════════════════
 
@@ -30,7 +30,7 @@ optional() {
        /home/linuxbrew/.linuxbrew/bin/brew 2>/dev/null)" ]; }; then ok "$1 ${D}(optional: $2)${R}"; else info "${D}– $1 not installed (optional: $2)${R}"; fi
 }
 
-printf '\n  %sterminal-setup %s%s %s· %s%s\n' "$B" "$(repo_version "$REPO")" "$R" "$D" "$(tilde "$REPO")" "$R"
+printf '\n  %sterminal-helm %s%s %s· %s%s\n' "$B" "$(repo_version "$REPO")" "$R" "$D" "$(tilde "$REPO")" "$R"
 printf '\n  %sTools%s\n' "$B" "$R"
 need zsh
 need tmux "$TMUX_MIN" "tmux -V"
@@ -72,11 +72,11 @@ printf '\n  %sConfig%s\n' "$B" "$R"
 . "$REPO/install/config.sh"
 for f in .zshrc .tmux.conf .zshenv; do
   case $f in .zshrc) want=$(block_zsh) ;; .zshenv) want=$(block_zshenv) ;; *) want=$(block_tmux) ;; esac
-  case $f in .zshenv) what="skips the system's compinit (zsh/zshrc runs it)" ;; *) what="loads terminal-setup" ;; esac
+  case $f in .zshenv) what="skips the system's compinit (zsh/zshrc runs it)" ;; *) what="loads terminal-helm" ;; esac
   if has_block "$HOME/$f" && [ "$(block_in "$HOME/$f")" = "$want" ]; then ok "~/$f $what"
   elif [ $f = .zshenv ]; then fail "~/$f does not skip the system's compinit (run ./install.sh)"; problems=$((problems + 1))
-  elif has_block "$HOME/$f"; then fail "~/$f loads terminal-setup from another folder (run ./install.sh)"; problems=$((problems + 1))
-  else fail "~/$f does not load terminal-setup (run ./install.sh)"; problems=$((problems + 1)); fi
+  elif has_block "$HOME/$f"; then fail "~/$f loads terminal-helm from another folder (run ./install.sh)"; problems=$((problems + 1))
+  else fail "~/$f does not load terminal-helm (run ./install.sh)"; problems=$((problems + 1)); fi
 done
 for f in $(links_into_repo); do
   fail "~/$f is still a link into the repo, from an older install (run ./install.sh)"; problems=$((problems + 1))

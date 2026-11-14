@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · WSL: Linux plus the Windows integration.
+#  terminal-helm · WSL: Linux plus the Windows integration.
 #  Windows apps are called by their full path: they are not on $PATH when
 #  /etc/wsl.conf has appendWindowsPath=false (keeps the shell fast).
 # ═══════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-# terminal-setup
+# terminal-helm
 
 Mi terminal, lista en minutos en cualquier máquina: **zsh** con prompt, autocompletado y atajos, y **tmux** con todo integrado: barra con pestañas y botones, menús con el ratón, una guía de atajos con buscador y un **monitor del sistema** (procesos, puertos, disco, paquetes, servidores SSH, contenedores Docker y sus logs, y tus repos git).
 
@@ -82,12 +82,12 @@ Cada panel tiene su botón de **zoom**, su menú (clic derecho o `Enter`) y se a
 Lo único que necesitas antes es **git**. El instalador hace el resto: te enseña lo que va a hacer y pregunta antes de empezar.
 
 ```bash
-git clone https://github.com/kibanly/terminal-setup.git ~/workspace/terminal-setup
-cd ~/workspace/terminal-setup
+git clone https://github.com/kibanly/terminal-helm.git ~/workspace/terminal-helm
+cd ~/workspace/terminal-helm
 ./install.sh
 ```
 
-> El repo puede estar en cualquier carpeta. Si su ruta tiene espacios, el instalador crea un enlace sin ellos (`~/.local/share/terminal-setup`) y lo usa en todas partes. Si después lo mueves, vuelve a ejecutar `./install.sh` para que tus ficheros apunten al sitio nuevo.
+> El repo puede estar en cualquier carpeta. Si su ruta tiene espacios, el instalador crea un enlace sin ellos (`~/.local/share/terminal-helm`) y lo usa en todas partes. Si después lo mueves, vuelve a ejecutar `./install.sh` para que tus ficheros apunten al sitio nuevo.
 
 Al terminar, **abre una terminal nueva**.
 
@@ -95,8 +95,8 @@ Al terminar, **abre una terminal nueva**.
 
 ```bash
 sudo apt update && sudo apt install -y git
-git clone https://github.com/kibanly/terminal-setup.git ~/workspace/terminal-setup
-cd ~/workspace/terminal-setup && ./install.sh
+git clone https://github.com/kibanly/terminal-helm.git ~/workspace/terminal-helm
+cd ~/workspace/terminal-helm && ./install.sh
 ```
 
 - Te pedirá tu contraseña (`sudo`) para instalar paquetes.
@@ -117,8 +117,8 @@ cd ~/workspace/terminal-setup && ./install.sh
 3. **Dentro de Ubuntu**, igual que en Ubuntu:
    ```bash
    sudo apt update && sudo apt install -y git
-   git clone https://github.com/kibanly/terminal-setup.git ~/workspace/terminal-setup
-   cd ~/workspace/terminal-setup && ./install.sh
+   git clone https://github.com/kibanly/terminal-helm.git ~/workspace/terminal-helm
+   cd ~/workspace/terminal-helm && ./install.sh
    ```
 4. **La fuente y el perfil se configuran en Windows**, no en Linux: [windows/windows-terminal.md](windows/windows-terminal.md). En resumen, en PowerShell:
    ```powershell
@@ -140,8 +140,8 @@ En WSL, «abrir en el navegador» y `open` usan el navegador y el Explorador **d
    ```
 2. **Clona e instala**:
    ```bash
-   git clone https://github.com/kibanly/terminal-setup.git ~/workspace/terminal-setup
-   cd ~/workspace/terminal-setup && ./install.sh
+   git clone https://github.com/kibanly/terminal-helm.git ~/workspace/terminal-helm
+   cd ~/workspace/terminal-helm && ./install.sh
    ```
    Si no tienes [Homebrew](https://brew.sh), el instalador lo instala primero (te pedirá la contraseña). Después instala todo con `brew bundle` (lista en [`install/Brewfile`](install/Brewfile)), **fuente incluida**.
 3. **Terminal**: recomiendo [iTerm2](https://iterm2.com), [Ghostty](https://ghostty.org) o [WezTerm](https://wezfurlong.org/wezterm/), que muestran bien los colores y los iconos. En sus ajustes:
@@ -158,11 +158,11 @@ En WSL, «abrir en el navegador» y `open` usan el navegador y el Explorador **d
 2. **Fuente**: JetBrainsMono Nerd Font, donde corresponda (ver arriba).
 3. **Configuración**: **no sustituye ni enlaza nada**. Añade unas líneas **al final** de tu `~/.zshrc` y de tu `~/.tmux.conf` (si no existen, los crea), entre dos marcas para que `./uninstall.sh` pueda quitarlas:
    ```zsh
-   # >>> terminal-setup >>>  (./uninstall.sh takes it out)
+   # >>> terminal-helm >>>  (./uninstall.sh takes it out)
    source "/ruta/al/repo/zsh/zshrc"
-   # <<< terminal-setup <<<
+   # <<< terminal-helm <<<
    ```
-   En `~/.tmux.conf` es lo mismo, con `source-file`. En `~/.zshenv` añade `skip_global_compinit=1`, para que Ubuntu no cargue el autocompletado otra vez antes que el repo. El resto de tus ficheros queda igual; por si acaso, guarda una copia de cómo estaban en `~/.terminal-setup-backup/<fecha>/`.
+   En `~/.tmux.conf` es lo mismo, con `source-file`. En `~/.zshenv` añade `skip_global_compinit=1`, para que Ubuntu no cargue el autocompletado otra vez antes que el repo. El resto de tus ficheros queda igual; por si acaso, guarda una copia de cómo estaban en `~/.terminal-helm-backup/<fecha>/`.
    - Ese `source` carga también los alias y las funciones del repo: no hace falta nada más.
    - `~/.tmux` sigue siendo una carpeta tuya: ahí van los plugins, los logs y las descripciones de sesión.
    - El prompt usa el `starship.toml` del repo (variable `STARSHIP_CONFIG`). La config de btop y la de micro se copian solo si no tienes una.
@@ -190,7 +190,7 @@ Lo mismo con **`make`** (si no lo tienes: `sudo apt install make`; `./install.sh
 | `install-no-update` | solo lo que falte, sin `update` |
 | `config` | solo la configuración |
 | `dry-run` | enseña lo que haría, sin cambiar nada |
-| `uninstall` | quita las líneas de terminal-setup (`./uninstall.sh`) |
+| `uninstall` | quita las líneas de terminal-helm (`./uninstall.sh`) |
 | `doctor` | comprobar la instalación |
 | `files` | todos los archivos que ha puesto la instalación y para qué sirve cada uno (también: `terminal files`) |
 | `monitor` | reconstruir el monitor del sistema |
@@ -253,9 +253,9 @@ Hay dos sitios, según para quién sea el cambio:
 
 - **Para todas tus máquinas**: edita los ficheros **del repo** (tabla de abajo), haz `git commit` y llévalo a las demás con `git pull`.
 - **Solo para esta máquina** (alias propios, rutas, nvm, pyenv…): en **tu `~/.zshrc`**, como siempre.
-  - Lo que pongas **antes** de la línea de terminal-setup se carga primero.
+  - Lo que pongas **antes** de la línea de terminal-helm se carga primero.
   - Lo que pongas **después** se carga al final y **gana** sobre el repo (por ejemplo, para redefinir un alias). tmux arranca cuando ya se ha cargado todo tu `~/.zshrc`, así que también ve lo de después (un `export DOCKER_HOST=…`, el `PATH`…).
-  - En `~/.tmux.conf` funciona igual: lo que va después de la línea de terminal-setup gana.
+  - En `~/.tmux.conf` funciona igual: lo que va después de la línea de terminal-helm gana.
 
 Para aplicar los cambios:
 - **tmux** recarga la configuración solo al guardar `~/.tmux.conf` o `tmux/tmux.conf` (o con `Ctrl+a r`).
@@ -276,7 +276,7 @@ Para aplicar los cambios:
 ## Actualizar
 
 ```bash
-cd ~/workspace/terminal-setup
+cd ~/workspace/terminal-helm
 git pull          # lo último del repo
 ./install.sh      # instala lo que falte y, como ya está instalado, hace `update`:
                   # paquetes del sistema y plugins a su última versión
@@ -296,10 +296,10 @@ git pull          # lo último del repo
 ## Desinstalar
 
 ```bash
-cd ~/workspace/terminal-setup && ./uninstall.sh
+cd ~/workspace/terminal-helm && ./uninstall.sh
 ```
 
-Quita **solo las líneas de terminal-setup** de `~/.zshrc`, `~/.tmux.conf` y `~/.zshenv`; el resto de esos ficheros queda igual (si solo tenían esas líneas, los borra). También quita las configs de btop y micro que copió, si no las has cambiado.
+Quita **solo las líneas de terminal-helm** de `~/.zshrc`, `~/.tmux.conf` y `~/.zshenv`; el resto de esos ficheros queda igual (si solo tenían esas líneas, los borra). También quita las configs de btop y micro que copió, si no las has cambiado.
 
 Los paquetes, la fuente y los plugins **se quedan instalados**, porque otras cosas pueden usarlos. `~/.tmux` también se queda, porque ahí están tus logs.
 
@@ -308,7 +308,7 @@ Los paquetes, la fuente y los plugins **se quedan instalados**, porque otras cos
 ## Estructura del repo
 
 ```
-terminal-setup/
+terminal-helm/
 ├── install.sh / uninstall.sh       instalar / deshacer
 ├── Makefile                        los mismos comandos con make (make a secas: la lista)
 ├── install/
@@ -361,6 +361,9 @@ La terminal no usa la Nerd Font. Instálala (en WSL: en Windows) y elígela en l
 
 **Al abrir la terminal no arranca tmux**
 No arranca dentro de VS Code, JetBrains, por SSH ni si `TERMINAL_NO_AUTOSTART` está puesto. Para abrirlo a mano: `terminal`.
+
+**En la terminal de JetBrains (PhpStorm, IntelliJ…) la hora no sale a la derecha**
+Es a propósito: esa terminal no mide la línea como starship (los iconos, su anchura) y la parte alineada a la derecha se salía del borde. Allí el prompt usa una copia del tema sin `$fill` (`~/.cache/zsh/starship-jetbrains.toml`, que se rehace al cambiar `config/starship.toml`): duración, IP y hora van justo detrás de la carpeta y la rama.
 
 **`tmux: unknown option` o errores al cargar la configuración**
 El tmux que se ejecuta es anterior a la 3.6. Comprueba con `tmux -V` y `which tmux`. En Ubuntu 24.04 debería ser `/usr/local/bin/tmux`; si no, vuelve a ejecutar `./install.sh`. Si tenías tmux abierto con la versión vieja, ciérralo del todo: `tmux kill-server`.

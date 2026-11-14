@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · macOS. open, pbcopy / pbpaste and the ssh-agent (with the
+#  terminal-helm · macOS. open, pbcopy / pbpaste and the ssh-agent (with the
 #  keychain) come with the system, so there is little to add here.
 # ═══════════════════════════════════════════════════════════════
 

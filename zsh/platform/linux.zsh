@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · Linux (Ubuntu). Also loaded by wsl.zsh.
+#  terminal-helm · Linux (Ubuntu). Also loaded by wsl.zsh.
 # ═══════════════════════════════════════════════════════════════
 
 # open a file, folder or URL with the desktop's app (Ubuntu's own `open` is openvt)

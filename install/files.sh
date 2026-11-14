@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2088  # "~/…" in messages is text to show, not a path
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · every file the install put on this machine, and what it is for
+#  terminal-helm · every file the install put on this machine, and what it is for
 #    bash install/files.sh      (also: make files)
 #  ✔ there · – not there (not needed here, or not created yet)
 #  Packages are the ones the setup uses: the install only adds those that were missing,
@@ -33,7 +33,7 @@ for f in .zshrc .tmux.conf .zshenv; do
                *) what="skips the system's compinit (zsh/zshrc runs it)" ;; esac
     file "$HOME/$f" "$what · lines $lines"
   else
-    printf '    %s– %-44s does not load terminal-setup (run ./install.sh)%s\n' "$D" "~/$f" "$R"
+    printf '    %s– %-44s does not load terminal-helm (run ./install.sh)%s\n' "$D" "~/$f" "$R"
   fi
 done
 
@@ -161,7 +161,7 @@ file "$HOME/.tmux/start-session" "the session new terminals open (terminal start
 file "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump" "zsh's completion cache (rebuilt once a day)"
 
 group "Backups" "your files as they were before a change, just in case · nothing deletes them"
-backups=$(ls -1d "$HOME"/.terminal-setup-backup/*/ 2>/dev/null)
+backups=$(ls -1d "$HOME"/.terminal-helm-backup/*/ 2>/dev/null)
 if [ -z "$backups" ]; then
   printf '    %s– none yet: an install only makes one when it changes a file of yours%s\n' "$D" "$R"
 fi

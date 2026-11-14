@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · packages on macOS, with Homebrew (install/Brewfile)
+#  terminal-helm · packages on macOS, with Homebrew (install/Brewfile)
 #  Homebrew itself is installed first when it is missing (it asks for your
 #  password and installs Apple's Command Line Tools if needed).
 # ═══════════════════════════════════════════════════════════════

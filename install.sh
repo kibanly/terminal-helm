@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · installer
+#  terminal-helm · installer
 #  Ubuntu 24.04 / 26.04 (also in WSL) and macOS. Run it again at any time: it only
 #  does what is still missing, and when it is installed already it also runs `update`
 #  (packages and plugins to their latest versions).
@@ -42,7 +42,7 @@ for arg in "$@"; do
     *)            die "unknown option: $arg (see ./install.sh --help)" ;;
   esac
 done
-BACKUP_DIR="$HOME/.terminal-setup-backup/$(date +%Y%m%d-%H%M%S)"
+BACKUP_DIR="$HOME/.terminal-helm-backup/$(date +%Y%m%d-%H%M%S)"
 # a folder with spaces: everything goes through a link without them (install/lib.sh: repo_path)
 REPO_REAL=$REPO
 if [ "$(repo_path "$REPO_REAL")" != "$REPO_REAL" ]; then
@@ -86,7 +86,7 @@ fi
 
 # ─── plan ───
 detect_platform
-printf '\n%sterminal-setup %s%s · %s · %s\n' "$B" "$(repo_version "$REPO")" "$R" "$OS_NAME" "$ARCH"
+printf '\n%sterminal-helm %s%s · %s · %s\n' "$B" "$(repo_version "$REPO")" "$R" "$OS_NAME" "$ARCH"
 printf '%s%s%s\n' "$D" "repo: $(tilde "$REPO")" "$R"
 [ "$DRY_RUN" = 1 ] && printf '%s(dry run: nothing is changed)%s\n' "$YELLOW" "$R"
 

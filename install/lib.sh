@@ -1,6 +1,6 @@
 # shellcheck shell=bash disable=SC2034  # its variables are read by the scripts that source it
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · shared helpers for install.sh and its parts
+#  terminal-helm · shared helpers for install.sh and its parts
 #  bash 3.2 compatible (macOS's /bin/bash): no associative arrays, no ${x,,}…
 # ═══════════════════════════════════════════════════════════════
 
@@ -12,7 +12,7 @@ export PATH
 # A repo in a folder with spaces is used through a link without them: tmux, the monitor and the
 # plugins run its scripts through sh, which would cut the path at the space. install.sh makes it;
 # the scripts that build shell commands go through it (tmux/system.sh, zsh/zshrc, tmux/*.zsh).
-REPO_LINK="$HOME/.local/share/terminal-setup"
+REPO_LINK="$HOME/.local/share/terminal-helm"
 repo_path() {   # repo_path <repo>: the path your files use for it
   case $1 in *[[:space:]]*) printf '%s' "$REPO_LINK" ;; *) printf '%s' "$1" ;; esac
 }
@@ -25,7 +25,7 @@ repo_version() {
 }
 
 # logs of long steps (apt-get, the tmux build), shown only when they fail
-LOG_DIR=${XDG_CACHE_HOME:-$HOME/.cache}/terminal-setup
+LOG_DIR=${XDG_CACHE_HOME:-$HOME/.cache}/terminal-helm
 
 B=$'\e[1m' D=$'\e[2m' R=$'\e[0m' BLUE=$'\e[34m' GREEN=$'\e[32m' YELLOW=$'\e[33m' RED=$'\e[31m'
 

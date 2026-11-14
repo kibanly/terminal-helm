@@ -17,6 +17,13 @@ Para publicar una versión, mira [Publicar una versión](#publicar-una-versión)
 
 ## [Sin publicar]
 
+### Cambios
+- **El proyecto se llama ahora `terminal-helm`** (antes `terminal-setup`). Al volver a ejecutar `./install.sh`, una instalación anterior se pasa sola al nombre nuevo:
+  - Las marcas de `~/.zshrc`, `~/.tmux.conf` y `~/.zshenv` cambian de nombre. Las líneas que hay entre ellas siguen igual.
+  - Las copias de seguridad pasan a `~/.terminal-helm-backup/`.
+  - El enlace para carpetas con espacios es ahora `~/.local/share/terminal-helm`. El antiguo se queda hasta que cierres las terminales abiertas, y `./uninstall.sh` lo quita.
+- El comando `terminal` y la variable `TERMINAL_SETUP` no cambian.
+
 ## [1.0.0] — 2026-11-04
 
 La primera versión etiquetada: todo lo que había hasta ahora.
@@ -74,8 +81,8 @@ La primera versión etiquetada: todo lo que había hasta ahora.
 - `make bench`: la CPU del monitor.
 - CI en GitHub Actions en cada push, con las acciones fijadas por commit. Dependabot propone las versiones nuevas.
 
-[Sin publicar]: https://github.com/kibanly/terminal-setup/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/kibanly/terminal-setup/releases/tag/v1.0.0
+[Sin publicar]: https://github.com/kibanly/terminal-helm/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/kibanly/terminal-helm/releases/tag/v1.0.0
 
 ---
 

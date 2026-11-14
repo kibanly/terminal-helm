@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · tmux and zsh plugins, at the versions in install/plugins.lock
+#  terminal-helm · tmux and zsh plugins, at the versions in install/plugins.lock
 #    tmux/<name> → ~/.tmux/plugins/<name>   (tpm and the tmux plugins)
 #    zsh/<name>  → ~/.zsh/plugins/<name>    (fzf-tab)
 #  A missing plugin is cloned and set to the locked commit. One already there is

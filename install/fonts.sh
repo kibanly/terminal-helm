@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # ═══════════════════════════════════════════════════════════════
-#  terminal-setup · the Nerd Font ("JetBrainsMono Nerd Font"): the icons of the
+#  terminal-helm · the Nerd Font ("JetBrainsMono Nerd Font"): the icons of the
 #  prompt, the tmux bar and the panels are drawn with it. It must be installed
 #  where the terminal window is drawn:
 #    macOS            the Brewfile installs it (cask font-jetbrains-mono-nerd-font)

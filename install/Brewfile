@@ -1,4 +1,4 @@
-# terminal-setup · macOS packages (brew bundle --file=install/Brewfile)
+# terminal-helm · macOS packages (brew bundle --file=install/Brewfile)
 # zsh comes with macOS; python3 with the Command Line Tools Homebrew needs anyway.
 
 brew "tmux"                     # ≥ 3.6

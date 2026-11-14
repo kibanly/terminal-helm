@@ -1,4 +1,4 @@
-# terminal-setup · plugins at the exact versions this setup was tested with.
+# terminal-helm · plugins at the exact versions this setup was tested with.
 # install.sh clones each one and checks out this commit; `update` moves them forward.
 # <folder>  <git url>  <commit>
 tmux/extrakto          https://github.com/laktak/extrakto                 d1af77988081dae496fa4a1f5e5e6bc9ef66767f

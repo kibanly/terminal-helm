@@ -2,7 +2,7 @@
 # ═══════════════════════════════════════════════════════════════
 #  The whole install tested in fresh Ubuntu containers (Docker):  tests/install/run.sh [tag…]
 #  (default: 24.04 26.04). The repo as it is now (uncommitted changes too) is copied into
-#  "~/my repos/terminal-setup" (a space on purpose) and inside.sh runs there as a sudo user:
+#  "~/my repos/terminal-helm" (a space on purpose) and inside.sh runs there as a sudo user:
 #  install, versions, zsh, make check, doctor, the tmux monitor tab by tab, autosave, btop
 #  sleeping out of sight, a closed pane repaired, install again, uninstall.
 #  Prints the PASS / FAIL lines · the full output of each goes to $LOGS (default a temp folder).
@@ -28,7 +28,7 @@ for tag in "${tags[@]}"; do
     mkdir -p "/home/tester/my repos"'
   # the working tree as it is now (.git too: the installer reads the version from it)
   tar -C "$(dirname "$repo")" -cf - "$(basename "$repo")" \
-    | docker exec -i "$name" sh -c 'mkdir -p "/home/tester/my repos/terminal-setup" && tar -C "/home/tester/my repos/terminal-setup" --strip-components=1 -xf -'
+    | docker exec -i "$name" sh -c 'mkdir -p "/home/tester/my repos/terminal-helm" && tar -C "/home/tester/my repos/terminal-helm" --strip-components=1 -xf -'
   docker cp "$here/inside.sh" "$name:/home/tester/inside.sh" >/dev/null
   docker exec "$name" chown -R tester:tester /home/tester
   docker exec -u tester -e HOME=/home/tester -e USER=tester -e LANG=en_US.UTF-8 -w /home/tester "$name" \
