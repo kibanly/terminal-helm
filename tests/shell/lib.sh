@@ -160,7 +160,7 @@ if command -v git >/dev/null; then
   "$T/sync/install/plugins-sync.sh" --bump >/dev/null
   is "--bump moves the lock to the newest commit" "$(awk '/demo/ {print $3}' "$T/sync/install/plugins.lock")" "$c2"
   is "--bump keeps the comments" "$(head -1 "$T/sync/install/plugins.lock")" "# lock"
-  is "--bump leaves no temporary file" "$(ls "$T/sync/install" | tr '\n' ' ')" "plugins-sync.sh plugins.lock "
+  is "--bump leaves no temporary file" "$(ls "$T/sync/install" | LC_ALL=C sort | tr '\n' ' ')" "plugins-sync.sh plugins.lock "
   "$T/sync/install/plugins-sync.sh" >/dev/null
   is "then update follows the new lock" "$(git -C "$HOME/.zsh/plugins/demo" rev-parse HEAD)" "$c2"
   printf 'zsh/demo  %s  %s\n' "$up" 1111111111111111111111111111111111111111 > "$T/sync/install/plugins.lock"
