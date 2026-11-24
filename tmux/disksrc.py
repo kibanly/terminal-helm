@@ -24,17 +24,7 @@ WSL = bool(os.environ.get("WSL_DISTRO_NAME")) or os.path.exists("/proc/sys/fs/bi
 C_ENV = {**os.environ, "LC_ALL": "C"}
 
 
-def tilde(p):
-    return "~" + p[len(HOME):] if p == HOME or p.startswith(HOME + "/") else p
-
-
-def human(n):
-    if n is None:
-        return ""
-    for unit in ("B", "K", "M", "G", "T"):
-        if n < 1024 or unit == "T":
-            return f"{n:.0f}{unit}" if unit in ("B", "K") else f"{n:.1f}{unit}"
-        n /= 1024
+from common import tilde, human  # noqa: E402  (shared copy, common.py)
 
 
 def ago(stamp):

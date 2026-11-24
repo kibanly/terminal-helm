@@ -43,8 +43,12 @@ sock=${TMUX%%,*}
 [[ -z $sock ]] && sock=$(tmux display -p '#{socket_path}' 2>/dev/null)
 [[ -z $sock ]] && sock=$(CDPATH='' cd "${TMUX_TMPDIR:-/tmp}" 2>/dev/null && pwd -P)/tmux-$UID/default   # as tmux resolves it (/private/tmp on macOS)
 key=${sock//\//_}
-run_dir=${XDG_RUNTIME_DIR:-/tmp}; [[ -d $run_dir && -w $run_dir ]] || run_dir=/tmp
-LOCK=$run_dir/tmux-system-$UID-$key.lock
+# in the socket's own folder: private (0700, tmux insists on it) and the same path for every
+# process, unlike /tmp, where another user could plant a link with the lock's predictable name
+run_dir=${sock%/*}
+[[ -d $run_dir ]] || mkdir -m 700 "$run_dir" 2>/dev/null      # its parent (/tmp, TMUX_TMPDIR) is there
+[[ -d $run_dir && -w $run_dir && -O $run_dir ]] || run_dir=${TMPDIR:-/tmp}
+LOCK=${run_dir%/}/tmux-system-$UID-$key.lock
 
 build() {
   local py="python3 -I $TERMINAL_SETUP/tmux"
@@ -150,7 +154,7 @@ mkdir_lock() {   # $1: seconds to wait · a lock left by a build that died (2 mi
 locked() {   # $1: seconds to wait (0: give up at once), then the command
   local wait=$1; shift
   if command -v flock >/dev/null; then
-    ( flock -w "$wait" 9 || exit 0; "$@" ) 9>"$LOCK"
+    ( flock -w "$wait" 9 || exit 0; "$@" ) 9>>"$LOCK"     # >>: opening it never empties anything
   else
     mkdir_lock "$wait" || return 0
     "$@"; local rc=$?

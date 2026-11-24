@@ -15,6 +15,7 @@ set -euo pipefail
 
 REPO=$(CDPATH='' cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 . "$REPO/install/lib.sh"
+trap remove_tmps EXIT
 REPO_REAL=$REPO
 [ -e "$(repo_path "$REPO")" ] && REPO=$(repo_path "$REPO")    # a folder with spaces: its link
 ASSUME_YES=0 DRY_RUN=0
@@ -49,13 +50,14 @@ step "Uninstall"
 migrate_old_name                           # an install from before the rename: its marks → the new ones
 for f in $blocks; do
   backup_copy "$HOME/$f"
-  without_block "$HOME/$f" > "$HOME/$f.tmp"
-  if [ -s "$HOME/$f.tmp" ]; then
-    cat "$HOME/$f.tmp" > "$HOME/$f"; ok "~/$f: terminal-helm lines taken out"
+  new_tmp rest                             # (never ~/.zshrc.tmp: that name may be yours)
+  without_block "$HOME/$f" > "$rest"
+  if [ -s "$rest" ]; then
+    cat "$rest" > "$HOME/$f"; ok "~/$f: terminal-helm lines taken out"
   else
     rm "$HOME/$f"; ok "~/$f removed (it only had the terminal-helm lines)"
   fi
-  rm -f "$HOME/$f.tmp"
+  rm -f "$rest"
 done
 for f in $copies; do rm "$HOME/$f"; ok "removed ~/$f"; done
 rm -f "$COPIED_LIST" "$OLD_COPIED_LIST"

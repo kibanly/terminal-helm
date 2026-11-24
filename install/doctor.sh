@@ -83,9 +83,15 @@ for f in $(links_into_repo); do
 done
 
 printf '\n  %sPlugins%s\n' "$B" "$R"
-while read -r name _; do
+while read -r name _ commit; do
   case $name in tmux/*) dir=$HOME/.tmux/plugins/${name#tmux/} ;; zsh/*) dir=$HOME/.zsh/plugins/${name#zsh/} ;; esac
-  if [ -d "$dir/.git" ]; then ok "${name#*/}"; else fail "${name#*/} is missing (run ./install.sh)"; problems=$((problems + 1)); fi
+  if [ ! -d "$dir/.git" ]; then
+    fail "${name#*/} is missing (run ./install.sh)"; problems=$((problems + 1))
+  elif [ "$(git -C "$dir" rev-parse HEAD 2>/dev/null)" != "$commit" ]; then
+    warn "${name#*/} is not at the locked ${commit:0:7} (run update, or Ctrl+a U)"
+  else
+    ok "${name#*/}"
+  fi
 done < <(grep -v '^#' "$REPO/install/plugins.lock")
 
 printf '\n  %sFont%s\n' "$B" "$R"

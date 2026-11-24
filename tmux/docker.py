@@ -89,11 +89,7 @@ def mem_bytes(text):
     return float(m[1]) * mult.get(m[2], 1)
 
 
-def human(n):
-    for unit in ("B", "K", "M", "G", "T"):
-        if n < 1024 or unit == "T":
-            return f"{n:.0f}{unit}" if unit in ("B", "K") else f"{n:.1f}{unit}"
-        n /= 1024
+from common import human  # noqa: E402  (shared copy, common.py)
 
 
 STATS_FRAME = re.compile(rb"\x1b\[2J|\x1b\[H")      # docker stats starts each refresh by clearing

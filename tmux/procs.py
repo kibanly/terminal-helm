@@ -28,11 +28,7 @@ ME = os.getuid()
 ICON_STOP, ICON_KILL, ICON_PORTS, ICON_COPY = "\U000F04DB", "\U000F0A7A", "\U000F0318", "\U000F018F"
 
 
-def human(n):
-    for unit in ("B", "K", "M", "G", "T"):
-        if n < 1024 or unit == "T":
-            return f"{n:.0f}{unit}" if unit in ("B", "K") else f"{n:.1f}{unit}"
-        n /= 1024
+from common import human, start_of  # noqa: E402  (shared copy, common.py)
 
 
 LINUX = os.path.isdir("/proc/self")       # macOS has no /proc: there ps tells the same
@@ -79,27 +75,6 @@ def ps_processes():
 
 def tmux(*args):
     return subprocess.run(["tmux", *args], capture_output=True, text=True)
-
-
-def start_of(pid):
-    """When a process started (in ticks since boot, /proc/PID/stat field 22; macOS: ps's
-    start time) · None when gone."""
-    try:
-        with open(f"/proc/{pid}/stat", "rb") as f:
-            stat = f.read().decode("utf-8", "replace")
-        return int(stat[stat.rindex(")") + 2:].split()[19])
-    except FileNotFoundError:
-        if os.path.isdir("/proc/self"):
-            return None                          # Linux: the process is gone
-    except (OSError, ValueError, IndexError):
-        return None
-    # no /proc (macOS): ps's start time, to the second ("Tue Nov  4 10:12:33 2026")
-    try:
-        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True,
-                             timeout=3, stdin=subprocess.DEVNULL).stdout.strip()
-    except (subprocess.TimeoutExpired, OSError):
-        return None
-    return out or None
 
 
 class Procs(TableApp):

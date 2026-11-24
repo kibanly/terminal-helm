@@ -26,6 +26,7 @@ REPO=$(CDPATH='' cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 USER=${USER:-$(id -un)}                    # not set in some containers
 # shellcheck source=install/lib.sh
 . "$REPO/install/lib.sh"
+trap remove_tmps EXIT
 . "$REPO/install/versions.sh"
 . "$REPO/install/fonts.sh"
 . "$REPO/install/plugins.sh"
@@ -36,7 +37,7 @@ for arg in "$@"; do
   case $arg in
     -y|--yes)     ASSUME_YES=1 ;;
     -n|--dry-run) DRY_RUN=1 ;;
-    --config-only|--links-only) CONFIG_ONLY=1 ;;
+    --config-only) CONFIG_ONLY=1 ;;
     --no-update)  NO_UPDATE=1 ;;
     -h|--help)    sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *)            die "unknown option: $arg (see ./install.sh --help)" ;;

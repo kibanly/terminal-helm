@@ -13,6 +13,7 @@ section() { echo; echo "===== $* ====="; }
 section "install (first run)"
 cd "$R" || exit 1
 t0=$(date +%s)
+tmps0=$(find /tmp -maxdepth 1 -user "$(id -u)" -name "tmp.*" | wc -l)
 ./install.sh --yes > ~/install1.log 2>&1; rc=$?
 echo "install rc=$rc in $(( $(date +%s) - t0 ))s"
 tail -25 ~/install1.log
@@ -22,6 +23,7 @@ check "repo link made (path has a space)" test -L "$HOME/.local/share/terminal-h
 check "~/.zshrc loads the repo through the link" grep -q 'source "'"$HOME"'/.local/share/terminal-helm/zsh/zshrc"' ~/.zshrc
 check "~/.tmux.conf has the link" grep -q "TERMINAL_SETUP=\"$HOME/.local/share/terminal-helm\"" ~/.tmux.conf
 check "login shell is zsh" sh -c 'getent passwd tester | grep -q zsh$'
+[ "$(find /tmp -maxdepth 1 -user "$(id -u)" -name "tmp.*" | wc -l)" = "$tmps0" ] && pass "install leaves no temporary files" || failc "temporary files left: $(find /tmp -maxdepth 1 -user "$(id -u)" -name "tmp.*" | tr '\n' ' ')"
 
 section "versions"
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
@@ -47,6 +49,7 @@ section "make check / doctor / files"
 bash "$R/install/doctor.sh" > ~/doctor.log 2>&1; drc=$?
 grep -E "✘|!" ~/doctor.log | head
 [ $drc = 0 ] && pass "doctor: no problems" || failc "doctor rc=$drc"
+grep -q "is not at the locked" ~/doctor.log && failc "a plugin is not at its locked commit" || pass "plugins at their locked commits"
 bash "$R/install/files.sh" > ~/files.log 2>&1 && pass "files.sh runs" || failc "files.sh"
 grep -q "a link to the repo, whose folder has spaces" ~/files.log && pass "files.sh lists the link" || failc "files.sh link line"
 
@@ -62,6 +65,10 @@ echo "labels: $panes"
 cmds=$(tmux list-panes -s -t =system -F '#{pane_start_command}' | head -3)
 echo "$cmds" | grep -q "share/terminal-helm" && pass "pane commands use the link" || failc "pane commands: $cmds"
 check "config loaded without errors" sh -c '! tmux show-messages 2>/dev/null | grep -iE "error|unknown|invalid"'
+sockdir=$(dirname "$(tmux display -p '#{socket_path}')")
+ls "$sockdir"/tmux-system-*.lock >/dev/null 2>&1 && pass "monitor lock in the socket folder ($sockdir)" || failc "no monitor lock in $sockdir"
+ls /tmp/tmux-system-* >/dev/null 2>&1 && failc "a monitor lock left in /tmp" || pass "no monitor lock in /tmp"
+tmux list-keys -T prefix U | grep -q plugins-sync.sh && pass "Ctrl+a U syncs to plugins.lock" || failc "Ctrl+a U: $(tmux list-keys -T prefix U)"
 tmux switch-client -c "$(tmux list-clients -F '#{client_name}' | head -1)" -t =system 2>/dev/null
 for w in info monitor disk packages ssh docker git; do
   tmux select-window -t "system:$w"; sleep 6
@@ -104,9 +111,15 @@ res=$(tmux list-panes -t system:info -F '#{pane_id} #{@label} #{pane_height} #{@
 echo "Resources: $res"; set -- $res; [ "$3" = "$4" ] && pass "Resources height = its rows ($3)" || failc "Resources height $3 vs rows $4"
 
 section "install again (update mode, idempotent)"
+# a plugin moved ahead of the lock (what tpm's git pull used to do): update sets it back
+locked=$(awk '$1=="zsh/fzf-tab" {print $3}' "$R/install/plugins.lock")
+git -C ~/.zsh/plugins/fzf-tab fetch -q --unshallow 2>/dev/null; git -C ~/.zsh/plugins/fzf-tab fetch -q origin
+git -C ~/.zsh/plugins/fzf-tab reset -q --hard origin/HEAD
+echo "fzf-tab moved to $(git -C ~/.zsh/plugins/fzf-tab rev-parse --short HEAD) (lock ${locked:0:7})"
 cd "$R" && ./install.sh --yes > ~/install2.log 2>&1; rc=$?
 grep -E "Update|update" ~/install2.log | head -3
 [ $rc = 0 ] && pass "second install exits 0" || { failc "second install rc=$rc"; tail -15 ~/install2.log; }
+[ "$(git -C ~/.zsh/plugins/fzf-tab rev-parse HEAD)" = "$locked" ] && pass "update: plugins back at plugins.lock" || failc "update: fzf-tab at $(git -C ~/.zsh/plugins/fzf-tab rev-parse --short HEAD), lock ${locked:0:7}"
 [ "$(grep -c 'terminal-helm' ~/.zshrc)" -le 3 ] && pass "~/.zshrc block not duplicated" || failc "~/.zshrc duplicated"
 
 section "uninstall"
@@ -116,4 +129,6 @@ tail -8 ~/uninstall.log
 [ $rc = 0 ] && pass "uninstall exits 0" || failc "uninstall rc=$rc"
 check "link removed" test ! -e "$HOME/.local/share/terminal-helm"
 check "~/.tmux.conf gone or without the block" sh -c '! grep -q terminal-helm ~/.tmux.conf 2>/dev/null'
+[ "$(find /tmp -maxdepth 1 -user "$(id -u)" -name "tmp.*" | wc -l)" = "$tmps0" ] && pass "uninstall leaves no temporary files" || failc "temporary files left after uninstall"
+[ -n "$(find ~ -maxdepth 1 -name "*.tmp")" ] && failc "a *.tmp file left in ~" || pass "no *.tmp in ~"
 echo DONE

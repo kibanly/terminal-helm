@@ -24,9 +24,12 @@ if [[ -r /proc/stat ]]; then
   while read -r k v _; do case $k in MemTotal:) mt=$v;; MemAvailable:) ma=$v;; esac; done < /proc/meminfo
   used_kb=$(( mt - ma ))
 else                                                   # macOS
-  cores=$(sysctl -n hw.ncpu)
+  # cores and RAM never change: asked once, then read from a file (two sysctl less per call)
+  if ! { read -r cores mt 2>/dev/null < "$cache.static" && [[ $cores =~ ^[0-9]+$ && $mt =~ ^[0-9]+$ ]]; }; then
+    cores=$(sysctl -n hw.ncpu); mt=$(( $(sysctl -n hw.memsize) / 1024 ))
+    echo "$cores $mt" > "$cache.static.$$" && mv -f "$cache.static.$$" "$cache.static"
+  fi
   cpu=$(LC_ALL=C ps -A -o %cpu= | awk -v n="$cores" '{ s += $1 } END { c = s / n; if (c > 100) c = 100; printf "%d", c }')
-  mt=$(( $(sysctl -n hw.memsize) / 1024 ))
   used_kb=$(vm_stat | awk '
     /page size of/            { size = $8 }
     /Anonymous pages/         { app = $3 }

@@ -47,7 +47,7 @@ font_install() {
   [ "$FONT_TODO" = linux ] || return 0
   step "JetBrainsMono Nerd Font"
   local tmp
-  tmp=$(mktemp -d)
+  new_tmp tmp -d
   download "https://github.com/ryanoasis/nerd-fonts/releases/download/$NERD_FONT_VERSION/$NERD_FONT.zip" \
     "$tmp/font.zip" font
   run mkdir -p ~/.local/share/fonts/JetBrainsMonoNerdFont

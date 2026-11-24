@@ -134,6 +134,39 @@ is "the old backups moved" "$(cat "${BACKUP_DIR%/*}/20260101-000000/x") $(yes_ t
 is "the old list of copies moved" "$(cat "$COPIED_LIST") $(yes_ test -e "$OLD_COPIED_LIST")" ".config/btop/btop.conf no"
 add_block "$old" "$(block_zshenv)" >/dev/null
 is "then the install sees its block: not added twice" "$(grep -c "^$MARK_BEGIN" "$old")" 1
+is "no temporary file left next to it" "$(find "$HOME" -maxdepth 1 -name '*.tmp' | wc -l | tr -d ' ')" 0
+
+# ─── temporary files: noted, removed together (the EXIT trap of install.sh / uninstall.sh) ───
+( TMP_PATHS=(); new_tmp f; new_tmp d -d; echo x > "$f"; touch "$d/y"
+  echo "$f $d" > "$T/tmps"; remove_tmps )
+read -r f d < "$T/tmps"
+is "new_tmp made a file and a folder, remove_tmps took both" "$(yes_ test -e "$f") $(yes_ test -e "$d")" "no no"
+( TMP_PATHS=(); set -u; remove_tmps; echo ok ) > "$T/none" 2>&1
+is "remove_tmps with nothing noted (set -u, bash 3.2)" "$(cat "$T/none")" ok
+( TMP_PATHS=(); trap remove_tmps EXIT; new_tmp f; echo "$f" > "$T/died"; die "on purpose" ) 2>/dev/null
+is "a die still removes them" "$(yes_ test -e "$(cat "$T/died")")" no
+
+# ─── plugins: install/plugins-sync.sh sets each one to its commit in the lock ───
+if command -v git >/dev/null; then
+  up="$T/upstream"; git init -q "$up"
+  for n in 1 2; do git -C "$up" -c user.name=t -c user.email=t@t commit -q --allow-empty -m "c$n"; done
+  c1=$(git -C "$up" rev-parse HEAD~1); c2=$(git -C "$up" rev-parse HEAD)
+  mkdir -p "$T/sync/install" "$HOME/.zsh/plugins"
+  cp "$ROOT/install/plugins-sync.sh" "$T/sync/install/"
+  printf '# lock\nzsh/demo  %s  %s\n' "$up" "$c1" > "$T/sync/install/plugins.lock"
+  git clone -q "$up" "$HOME/.zsh/plugins/demo"
+  "$T/sync/install/plugins-sync.sh" >/dev/null
+  is "a plugin ahead of the lock goes back to it" "$(git -C "$HOME/.zsh/plugins/demo" rev-parse HEAD)" "$c1"
+  "$T/sync/install/plugins-sync.sh" --bump >/dev/null
+  is "--bump moves the lock to the newest commit" "$(awk '/demo/ {print $3}' "$T/sync/install/plugins.lock")" "$c2"
+  is "--bump keeps the comments" "$(head -1 "$T/sync/install/plugins.lock")" "# lock"
+  is "--bump leaves no temporary file" "$(ls "$T/sync/install" | tr '\n' ' ')" "plugins-sync.sh plugins.lock "
+  "$T/sync/install/plugins-sync.sh" >/dev/null
+  is "then update follows the new lock" "$(git -C "$HOME/.zsh/plugins/demo" rev-parse HEAD)" "$c2"
+  printf 'zsh/demo  %s  %s\n' "$up" 1111111111111111111111111111111111111111 > "$T/sync/install/plugins.lock"
+  is "a commit that does not exist: an error, the plugin untouched" \
+    "$(yes_ "$T/sync/install/plugins-sync.sh" 2>/dev/null) $(git -C "$HOME/.zsh/plugins/demo" rev-parse HEAD)" "no $c2"
+fi
 
 echo "$passed passed, $failed failed"
 [ "$failed" = 0 ]

@@ -88,7 +88,7 @@ click here|Swap with the previous pane|swap-pane -U
 [Ctrl+a] [Ctrl+r]|Restore the last save|run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh
 [Ctrl+a] [r]|Reload ~/.tmux.conf · also happens by itself when you save it|source-file ~/.tmux.conf ; display-message "config reloaded"
 [Ctrl+a] [I]|Install plugins|run-shell ~/.tmux/plugins/tpm/bindings/install_plugins
-[Ctrl+a] [U]|Update plugins|run-shell ~/.tmux/plugins/tpm/bindings/update_plugins
+[Ctrl+a] [U]|Update plugins · to the versions in install/plugins.lock|@keys:U
 [Ctrl+a] [/]|What does a key do? · press it to find out|command-prompt -k -p key { list-keys -1N "%%" }
 [Ctrl+a] [Ctrl+a]|Send Ctrl+a to the program · start of line in the shell|
 @System monitor|the system session · 1 info · 2 monitor (processes, ports) · 3 disk · 4 packages · 5 ssh · 6 docker · 7 git

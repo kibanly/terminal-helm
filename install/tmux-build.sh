@@ -9,7 +9,7 @@ tmux_build() {
   step "tmux $TMUX_VERSION from source"
   apt_get install build-essential pkg-config bison libevent-dev libncurses-dev
   local tmp
-  tmp=$(mktemp -d)
+  new_tmp tmp -d
   download "https://github.com/tmux/tmux/releases/download/$TMUX_VERSION/tmux-$TMUX_VERSION.tar.gz" \
     "$tmp/tmux.tar.gz" tmux
   run tar -xzf "$tmp/tmux.tar.gz" -C "$tmp"

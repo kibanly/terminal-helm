@@ -117,7 +117,7 @@ apt_install() {
     ok "apt packages installed"
   fi
   local tmp
-  tmp=$(mktemp -d)
+  new_tmp tmp -d
   if [ "$NEED_TMUX_BUILD" = 1 ]; then
     # shellcheck source=install/tmux-build.sh
     . "$REPO/install/tmux-build.sh"

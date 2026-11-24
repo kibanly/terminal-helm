@@ -23,11 +23,11 @@ update() {
   # Node: the newest LTS becomes the default (the versions you had stay: fnm list · fnm uninstall)
   (( $+commands[fnm] )) && _maint_step "node (fnm, latest LTS)" eval \
     'fnm install --lts 2>&1 | grep -v "already installed"; fnm default lts-latest'
-  [[ -d ~/.zsh/plugins/fzf-tab ]] && _maint_step "fzf-tab" git -C ~/.zsh/plugins/fzf-tab pull -q
+  # zsh and tmux plugins: to the commits in install/plugins.lock, never to whatever is upstream
+  # (a newer lock comes with the repo: make bump-plugins, reviewed and committed)
+  [[ -x $TERMINAL_SETUP/install/plugins-sync.sh ]] \
+    && _maint_step "zsh and tmux plugins (plugins.lock)" $TERMINAL_SETUP/install/plugins-sync.sh
   (( $+commands[tldr] )) && _maint_step "tldr pages" eval 'tldr --update >/dev/null'
-  # tmux plugins (tpm reads the list from the running server)
-  [[ -x ~/.tmux/plugins/tpm/bin/update_plugins ]] && tmux info &>/dev/null \
-    && _maint_step "tmux plugins" ~/.tmux/plugins/tpm/bin/update_plugins all
   tmux set -g @pkgs-changed "$EPOCHREALTIME" 2>/dev/null      # the tmux Packages / Updates panes re-read
   if (( $#_maint_failed )); then
     echo "⚠️  Update finished with errors in: ${(j:, :)_maint_failed}"; return 1

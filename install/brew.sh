@@ -72,7 +72,7 @@ macos_fixes() {
   # 1. macOS's own ncurses does not know "tmux-256color" (the terminal tmux declares), so
   #    less, vim… inside tmux would complain: add it to ~/.terminfo from Homebrew's ncurses
   if ! /usr/bin/infocmp tmux-256color >/dev/null 2>&1 && [ -x "$prefix/opt/ncurses/bin/infocmp" ]; then
-    tmp=$(mktemp)
+    new_tmp tmp
     run sh -c "'$prefix/opt/ncurses/bin/infocmp' -x tmux-256color > '$tmp' && /usr/bin/tic -x -o '$HOME/.terminfo' '$tmp'"
     rm -f "$tmp"
     ok "tmux-256color terminal description in ~/.terminfo"

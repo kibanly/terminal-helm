@@ -59,7 +59,6 @@ def write_start(name, folder=""):
     os.replace(tmp, START)
 
 
-
 def read_descriptions():
     out = {}
     try:
@@ -97,8 +96,7 @@ def session_of(client):
     return ""
 
 
-def tilde(path):
-    return "~" + path[len(HOME):] if path == HOME or path.startswith(HOME + "/") else path
+from common import tilde  # noqa: E402  (shared copy, common.py)
 
 
 def clean_name(name):

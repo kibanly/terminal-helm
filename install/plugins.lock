@@ -1,5 +1,6 @@
 # terminal-helm · plugins at the exact versions this setup was tested with.
-# install.sh clones each one and checks out this commit; `update` moves them forward.
+# install.sh clones each one at this commit; `update` (and Ctrl+a U) set them back to it.
+# Newer versions: make bump-plugins, read what changed, test, commit this file.
 # <folder>  <git url>  <commit>
 tmux/extrakto          https://github.com/laktak/extrakto                 d1af77988081dae496fa4a1f5e5e6bc9ef66767f
 tmux/tmux-autoreload   https://github.com/b0o/tmux-autoreload             e98aa3b74cfd5f2df2be2b5d4aa4ddcc843b2eba

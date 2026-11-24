@@ -10,7 +10,7 @@ SHELL := /bin/bash
 YES_FLAG := $(if $(filter 1 yes true,$(YES)),--yes,)
 
 .DEFAULT_GOAL := help
-.PHONY: help install update install-no-update config dry-run uninstall doctor files monitor check test smoke test-install bench release version
+.PHONY: help install update install-no-update config dry-run uninstall doctor files monitor check test smoke test-install bench bump-plugins release version
 
 help: ## this list
 	@printf '\n  \033[1mterminal-helm\033[0m · make <target>   \033[2m(YES=1: no questions)\033[0m\n\n'
@@ -64,6 +64,9 @@ smoke: ## every monitor pane run in a private tmux, given keys, checked for erro
 
 test-install: ## the whole install in fresh Ubuntu containers (Docker; TAGS="24.04 26.04" · ~15 min)
 	@tests/install/run.sh $(TAGS)
+
+bump-plugins: ## install/plugins.lock to each plugin's newest commit (prints what to review) · then test and commit it
+	@install/plugins-sync.sh --bump
 
 bench: ## CPU of every monitor pane, tab by tab, in a private tmux (SECS=30 per tab)
 	@tests/bench/cpu.sh $(or $(SECS),30)

@@ -29,8 +29,7 @@ HOME = os.path.expanduser("~")
 BAT = shutil.which("bat") or shutil.which("batcat")
 
 
-def tilde(p):
-    return "~" + p[len(HOME):] if p == HOME or p.startswith(HOME + "/") else p
+from common import tilde  # noqa: E402  (shared copy, common.py)
 
 
 def docker(*args, cwd=None, timeout=15):

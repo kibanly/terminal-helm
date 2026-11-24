@@ -35,8 +35,7 @@ ARG_OPTS = set("BbcDEeFIiJLlmOoPpQRSWw")
 CLIENTS = ("ssh", "scp", "sftp", "rsync", "mosh", "sshfs")
 
 
-def tilde(p):
-    return "~" + p[len(HOME):] if p == HOME or p.startswith(HOME + "/") else p
+from common import tilde  # noqa: E402  (shared copy, common.py)
 
 
 def ssh_env():

@@ -23,8 +23,13 @@ Para publicar una versión, mira [Publicar una versión](#publicar-una-versión)
   - Las copias de seguridad pasan a `~/.terminal-helm-backup/`.
   - El enlace para carpetas con espacios es ahora `~/.local/share/terminal-helm`. El antiguo se queda hasta que cierres las terminales abiertas, y `./uninstall.sh` lo quita.
 - El comando `terminal` y la variable `TERMINAL_SETUP` no cambian.
+- **Los plugins solo cambian con `install/plugins.lock`.** `update` y `Ctrl+a U` ya no hacen `git pull` de cada plugin, que ejecutaba en cada shell y en tmux lo que hubiera ese día en su repo: los dejan en el commit del lock. Para subir de versión: `make bump-plugins` (muestra qué cambia con enlaces para revisarlo), probar y commitear el lock. `make doctor` avisa de un plugin que no está en su commit.
+- Se quitan `tmux/system/docker-fit.sh` (el nombre antiguo de `top-fit.sh`) y la opción `--links-only` (ahora `--config-only`). Si tu monitor se creó antes de la 1.0.0, `make monitor` lo rehace.
 
 ### Arreglos
+- **El bloqueo del monitor ya no está en `/tmp`** con un nombre que se podía adivinar, y abrirlo ya no vacía nada: va en la carpeta privada del socket de tmux. En macOS, otro usuario del equipo podía dejar un enlace con ese nombre y hacer que se vaciara un fichero tuyo.
+- **El instalador borra siempre sus temporales**, también cuando algo falla a mitad (descarga con sha256 incorrecto, error de apt o de compilación). Además, ya no usa `~/.zshrc.tmp` (ni `.tmux.conf.tmp`, `.zshenv.tmp`), que podían ser ficheros tuyos.
+- La barra de estado en macOS pregunta una sola vez los núcleos y la RAM: dos `sysctl` menos cada 5 segundos y por terminal.
 - **Las sesiones guardadas vuelven siempre al abrir la primera terminal.** tmux-continuum se saltaba a veces la restauración: si veía otro proceso `tmux` al arrancar (las llamadas del autoguardado o de la propia espera), creía que había otro servidor. Ahora, si no se ha restaurado nada y no hay ninguna en marcha, la restauración se lanza igualmente.
 - **Al convertir una instalación con enlaces, tu `~/.zshrc.local` sigue cargándose después del repo**, como antes. Hasta ahora, la línea de terminal-helm quedaba al final y tus alias, `compdef` y funciones se cargaban antes que los del repo. Con `--dry-run`, el aviso de prompts o gestores de plugins que chocan revisa también ese fichero.
 - Tests: la detección de WSL ya no falla en macOS (el test usaba el `uname` real en vez del falso).

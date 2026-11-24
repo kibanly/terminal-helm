@@ -42,8 +42,7 @@ MACOS = os.uname().sysname == "Darwin"
 PRIVATE = {"Documents", "Desktop", "Downloads", "Pictures", "Movies", "Music"}
 
 
-def tilde(p):
-    return "~" + p[len(HOME):] if p == HOME or p.startswith(HOME + "/") else p
+from common import tilde  # noqa: E402  (shared copy, common.py)
 
 
 def expand(p):

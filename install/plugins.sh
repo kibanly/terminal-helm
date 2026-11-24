@@ -4,7 +4,7 @@
 #    tmux/<name> → ~/.tmux/plugins/<name>   (tpm and the tmux plugins)
 #    zsh/<name>  → ~/.zsh/plugins/<name>    (fzf-tab)
 #  A missing plugin is cloned and set to the locked commit. One already there is
-#  left as it is: `update` may have moved it forward on purpose.
+#  left as it is: `update` (install/plugins-sync.sh) sets it to the locked commit.
 # ═══════════════════════════════════════════════════════════════
 
 plugin_dir() {

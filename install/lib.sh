@@ -36,6 +36,18 @@ warn()  { printf '    %s!%s %s\n' "$YELLOW" "$R" "$*"; }
 fail()  { printf '    %s✘ %s%s\n' "$RED" "$*" "$R" >&2; }
 die()   { fail "$*"; exit 1; }
 
+# Temporary files and folders: new_tmp <var> [mktemp options] puts a fresh path (mode 600 / 700,
+# random name) in <var> and notes it; remove_tmps, the EXIT trap of install.sh and
+# uninstall.sh, removes them all, also after die or a command failing under set -e.
+TMP_PATHS=()
+new_tmp() {
+  local _new_tmp_path
+  _new_tmp_path=$(mktemp "${@:2}") || die "could not make a temporary file"
+  TMP_PATHS+=("$_new_tmp_path")
+  printf -v "$1" '%s' "$_new_tmp_path"
+}
+remove_tmps() { [ "${#TMP_PATHS[@]}" -eq 0 ] || rm -rf -- "${TMP_PATHS[@]}"; }
+
 # download <url> <file> <name in versions.sh's SHA_…>: the file, checked against its sha256
 # before anything uses it (a download that changed or broke installs nothing)
 download() {

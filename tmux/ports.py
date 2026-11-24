@@ -82,39 +82,9 @@ def container_for(dock, proto, addr, port):
     return (exact or anyip or [None])[0]
 
 
-def start_of(pid):
-    """When a process started (/proc/PID/stat field 22; macOS: ps's start time) · None when gone."""
-    try:
-        with open(f"/proc/{pid}/stat", "rb") as f:
-            stat = f.read().decode("utf-8", "replace")
-        return int(stat[stat.rindex(")") + 2:].split()[19])
-    except FileNotFoundError:
-        if os.path.isdir("/proc/self"):
-            return None                          # Linux: the process is gone
-    except (OSError, ValueError, IndexError):
-        return None
-    # no /proc (macOS): ps's start time, to the second ("Tue Nov  4 10:12:33 2026")
-    try:
-        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True,
-                             timeout=3, stdin=subprocess.DEVNULL).stdout.strip()
-    except (subprocess.TimeoutExpired, OSError):
-        return None
-    return out or None
+from common import start_of, state_of  # noqa: E402  (shared copy, common.py)
 
 
-def state_of(pid):
-    """R, S, T (stopped)… · macOS (no /proc): what ps says."""
-    try:
-        with open(f"/proc/{pid}/stat", "rb") as f:
-            stat = f.read().decode("utf-8", "replace")
-        return stat[stat.rindex(")") + 2:].split()[0]
-    except (OSError, ValueError, IndexError):
-        pass
-    try:
-        return subprocess.run(["ps", "-o", "state=", "-p", str(pid)], capture_output=True, text=True,
-                              timeout=3).stdout.strip()[:1]
-    except (subprocess.TimeoutExpired, OSError):
-        return ""
 HAS_PROC = os.path.isdir("/proc/self")
 PROC = re.compile(r'\("([^"]+)",pid=(\d+)')
 

@@ -61,7 +61,7 @@ while read -r src dst; do
   file "$HOME/$dst" "$why"
 done <<< "$COPIES"
 
-group "Plugins" "git clones at the versions in install/plugins.lock · update moves them forward"
+group "Plugins" "git clones at the versions in install/plugins.lock · update keeps them there"
 plugin_why() {
   case $1 in
     tpm)              echo "tmux plugin manager: loads the others" ;;

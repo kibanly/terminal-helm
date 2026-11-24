@@ -51,13 +51,7 @@ def run_text(*argv, env=None, timeout=60):
         return ""
 
 
-def human(n):
-    if n is None:
-        return ""
-    for unit in ("B", "K", "M", "G"):
-        if n < 1024 or unit == "G":
-            return f"{n:.0f}{unit}" if unit in ("B", "K") else f"{n:.1f}{unit}"
-        n /= 1024
+from common import human  # noqa: E402  (shared copy, common.py)
 
 
 # ─── answers kept while the files they come from stay the same ───

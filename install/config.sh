@@ -62,7 +62,7 @@ has_old_block() { [ -f "$1" ] && awk -v b="$OLD_MARK_BEGIN" 'index($0,b)==1{f=1}
 # as they are), and the list of copies and the backups move to where they go now. The old link
 # for a folder with spaces stays: the shells open now still use it (uninstall.sh removes it).
 migrate_old_name() {
-  local f d new_backups=${BACKUP_DIR%/*}
+  local f d renamed new_backups=${BACKUP_DIR%/*}
   [ "${DRY_RUN:-0}" = 1 ] && {
     for f in .zshrc .tmux.conf .zshenv; do
       has_old_block "$HOME/$f" && info "[dry-run] ~/$f: terminal-setup marks → terminal-helm"
@@ -84,10 +84,11 @@ migrate_old_name() {
     has_old_block "$HOME/$f" || continue
     check_marks "$HOME/$f" "$OLD_MARK_BEGIN" "$OLD_MARK_END"
     backup_copy "$HOME/$f"
+    new_tmp renamed       # (never ~/.zshrc.tmp: that name may be yours)
     awk -v ob="$OLD_MARK_BEGIN" -v oe="$OLD_MARK_END" -v nb="$MARK_BEGIN" -v ne="$MARK_END" '
       index($0,ob)==1 { $0 = nb substr($0, length(ob) + 1) }
-      index($0,oe)==1 { $0 = ne substr($0, length(oe) + 1) }  { print }' "$HOME/$f" > "$HOME/$f.tmp"
-    cat "$HOME/$f.tmp" > "$HOME/$f"; rm -f "$HOME/$f.tmp"
+      index($0,oe)==1 { $0 = ne substr($0, length(oe) + 1) }  { print }' "$HOME/$f" > "$renamed"
+    cat "$renamed" > "$HOME/$f"; rm -f "$renamed"
     ok "~/$f: marks renamed (terminal-setup → terminal-helm)"
   done
 }
@@ -102,18 +103,18 @@ without_block() {
 
 # put the block at the end of $1 · if it is there already, refresh it in place (the repo moved…)
 add_block() {
-  local file=$1 block=$2 tmp
+  local file=$1 block=$2 tmp tmp_block
   if has_block "$file"; then
     check_marks "$file"
     if [ "$(block_in "$file")" = "$block" ]; then ok "$(tilde "$file") already loads terminal-helm"; return; fi
     [ "$DRY_RUN" = 1 ] && { info "[dry-run] update the terminal-helm lines in $(tilde "$file")"; return; }
     backup_copy "$file"
-    tmp=$(mktemp)
-    printf '%s\n' "$block" > "$tmp.block"
-    awk -v b="$MARK_BEGIN" -v e="$MARK_END" -v f="$tmp.block" '
+    new_tmp tmp; new_tmp tmp_block
+    printf '%s\n' "$block" > "$tmp_block"
+    awk -v b="$MARK_BEGIN" -v e="$MARK_END" -v f="$tmp_block" '
       index($0,b)==1 { while ((getline l < f) > 0) print l; on=1; next }
       on { if (index($0,e)==1) on=0; next }  { print }' "$file" > "$tmp"
-    cat "$tmp" > "$file"; rm -f "$tmp" "$tmp.block"
+    cat "$tmp" > "$file"; rm -f "$tmp" "$tmp_block"
     ok "$(tilde "$file"): terminal-helm lines updated"
     return
   fi
