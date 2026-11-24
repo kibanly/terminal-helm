@@ -9,6 +9,8 @@
 # ═══════════════════════════════════════════════════════════════
 SECS=${1:-30}
 R=$(cd "${2:-$(dirname "$0")/../..}" && pwd)
+# it counts CPU ticks in /proc and starts its client with util-linux's script: Linux only
+[ -r /proc/self/stat ] || { echo "make bench needs Linux (/proc): run it in Ubuntu, WSL or a container" >&2; exit 2; }
 export TMUX_TMPDIR; TMUX_TMPDIR=$(mktemp -d /tmp/tsb.XXXX)     # short: socket paths have a length limit
 trap 'tmux kill-server 2>/dev/null; rm -rf "$TMUX_TMPDIR"' EXIT
 unset TMUX

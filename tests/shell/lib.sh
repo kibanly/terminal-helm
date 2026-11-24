@@ -71,6 +71,13 @@ is "aarch64 is arm64" "$(cat "$T/arch")" arm64
 ( PATH="$T/bin:$PATH"; WSL_DISTRO_NAME=Ubuntu; detect_platform; echo "$IS_WSL $OS_NAME" ) > "$T/wsl"
 is "WSL seen" "$(cut -d' ' -f1 "$T/wsl")" 1
 is "and said in the name" "$(grep -c '(WSL)$' "$T/wsl")" 1
+if [ -r /etc/os-release ]; then          # (Linux: the containers of make test-install)
+  ( unset NAME VERSION ID VERSION_ID PRETTY_NAME; detect_platform
+    echo "${NAME-unset} ${VERSION-unset} ${ID-unset} $OS_VERSION" ) > "$T/osr"
+  is "os-release read without leaving its variables set" "$(cut -d' ' -f1-3 "$T/osr")" "unset unset unset"
+  # shellcheck disable=SC1091
+  is "and its version still read" "$(cut -d' ' -f4 "$T/osr")" "$(. /etc/os-release; echo "$VERSION_ID")"
+fi
 
 # ─── which version (git describe) ───
 if have git; then

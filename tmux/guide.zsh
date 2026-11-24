@@ -226,7 +226,7 @@ render() {
 # viewer fails (a python3 too old for it): a guide that opens and closes at once helps no one.
 if [[ $1 != search ]] && (( $+commands[python3] )); then
   err=$(mktemp 2>/dev/null || print /dev/null)
-  python3 -I $TERMINAL_SETUP/tmux/guide.py 2>$err && { rm -f $err; exit; }
+  python3 -I $TERMINAL_SETUP/tmux/guide.py 2>$err && { [[ $err != /dev/null ]] && rm -f $err; exit; }
   print -r -- "${Y}the guide viewer failed (${D}$(tail -1 $err 2>/dev/null)${X}${Y}): the plain list instead${X}"
   [[ $err != /dev/null ]] && rm -f $err
   sleep 1

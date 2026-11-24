@@ -126,10 +126,13 @@ detect_platform() {
   fi
   OS=linux OS_VERSION="" OS_NAME="Linux"
   if [ -r /etc/os-release ]; then
+    # read in a subshell: sourcing it here would set NAME, VERSION, ID… for the whole installer
+    local id version_id pretty
     # shellcheck disable=SC1091
-    . /etc/os-release
-    [ "${ID:-}" = ubuntu ] && OS=ubuntu
-    OS_VERSION=${VERSION_ID:-} OS_NAME=${PRETTY_NAME:-Linux}
+    { read -r id; read -r version_id; IFS= read -r pretty; } < <(
+      . /etc/os-release 2>/dev/null; printf '%s\n%s\n%s\n' "${ID:-}" "${VERSION_ID:-}" "${PRETTY_NAME:-}")
+    [ "$id" = ubuntu ] && OS=ubuntu
+    OS_VERSION=$version_id OS_NAME=${pretty:-Linux}
   fi
   if is_wsl; then
     IS_WSL=1 OS_NAME="$OS_NAME (WSL)"

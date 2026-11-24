@@ -29,7 +29,10 @@ Para publicar una versión, mira [Publicar una versión](#publicar-una-versión)
 ### Arreglos
 - **El bloqueo del monitor ya no está en `/tmp`** con un nombre que se podía adivinar, y abrirlo ya no vacía nada: va en la carpeta privada del socket de tmux. En macOS, otro usuario del equipo podía dejar un enlace con ese nombre y hacer que se vaciara un fichero tuyo.
 - **El instalador borra siempre sus temporales**, también cuando algo falla a mitad (descarga con sha256 incorrecto, error de apt o de compilación). Además, ya no usa `~/.zshrc.tmp` (ni `.tmux.conf.tmp`, `.zshenv.tmp`), que podían ser ficheros tuyos.
-- La barra de estado en macOS pregunta una sola vez los núcleos y la RAM: dos `sysctl` menos cada 5 segundos y por terminal.
+- La barra de estado en macOS pregunta una sola vez los núcleos y la RAM, y suma la CPU y la memoria en bash sin lanzar `awk`: unos 10 ms menos en cada actualización (cada 5 segundos y por terminal).
+- La guía ya no intenta borrar `/dev/null` cuando no puede crear su fichero temporal.
+- El instalador lee `/etc/os-release` sin dejar `NAME`, `VERSION`, `ID`… definidas en todo el script.
+- `make bench` avisa de que necesita Linux en vez de fallar con «MONITOR DID NOT START» en macOS.
 - **Las sesiones guardadas vuelven siempre al abrir la primera terminal.** tmux-continuum se saltaba a veces la restauración: si veía otro proceso `tmux` al arrancar (las llamadas del autoguardado o de la propia espera), creía que había otro servidor. Ahora, si no se ha restaurado nada y no hay ninguna en marcha, la restauración se lanza igualmente.
 - **Al convertir una instalación con enlaces, tu `~/.zshrc.local` sigue cargándose después del repo**, como antes. Hasta ahora, la línea de terminal-helm quedaba al final y tus alias, `compdef` y funciones se cargaban antes que los del repo. Con `--dry-run`, el aviso de prompts o gestores de plugins que chocan revisa también ese fichero.
 - Tests: la detección de WSL ya no falla en macOS (el test usaba el `uname` real en vez del falso).
