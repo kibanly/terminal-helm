@@ -157,9 +157,11 @@ unlink_old() {
       .zshrc)
         rm "$HOME/.zshrc"
         if [ -f "$HOME/.zshrc.local" ]; then
-          cp "$HOME/.zshrc.local" "$HOME/.zshrc"
+          # the old zsh/zshrc read ~/.zshrc.local at its end, after compinit and the repo's
+          # functions (compdef, wrapping clean…): the block goes first so it stays that way
+          { block_zsh; printf '\n'; cat "$HOME/.zshrc.local"; } > "$HOME/.zshrc"
           backup_copy "$HOME/.zshrc.local" && rm "$HOME/.zshrc.local"
-          ok "~/.zshrc: was a link, now your ~/.zshrc.local (+ the terminal-helm line)"
+          ok "~/.zshrc: was a link, now your ~/.zshrc.local, loaded after terminal-helm as before"
         else
           : > "$HOME/.zshrc"
           ok "~/.zshrc: was a link, now a file of yours"
@@ -182,9 +184,11 @@ unlink_old() {
 
 # things in your ~/.zshrc that do the same job as terminal-helm and may get in its way
 zshrc_clashes() {
-  [ -f "$HOME/.zshrc" ] || return 0
-  local what
-  what=$(without_block "$HOME/.zshrc" | grep -v '^[[:space:]]*#' | grep -oE 'oh-my-zsh\.sh|powerlevel10k|p10k|prezto|starship init|zinit|antigen|zplug' | sort -u | tr '\n' ' ' || true)
+  local file=$HOME/.zshrc what
+  # still a link into the repo (a dry run of an old install): what becomes ~/.zshrc is ~/.zshrc.local
+  case $(readlink "$file" 2>/dev/null || true) in "$REPO"/*) file=$HOME/.zshrc.local ;; esac
+  [ -f "$file" ] || return 0
+  what=$(without_block "$file" | grep -v '^[[:space:]]*#' | grep -oE 'oh-my-zsh\.sh|powerlevel10k|p10k|prezto|starship init|zinit|antigen|zplug' | sort -u | tr '\n' ' ' || true)
   [ -n "$what" ] || return 0
   warn "your ~/.zshrc also uses: ${what}— terminal-helm loads after it and wins, but"
   info "  two prompts or plugin managers can clash: take those lines out if something looks off"

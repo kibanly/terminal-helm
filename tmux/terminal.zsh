@@ -276,7 +276,7 @@ autostart() {
     tmux start-server
     local save
     for save in ~/.tmux/resurrect/last ${XDG_DATA_HOME:-$HOME/.local/share}/tmux/resurrect/last; do
-      [[ -e $save ]] && { wait_for_restore; break }
+      [[ -e $save ]] && { wait_for_restore; restore_if_skipped; break }
     done
   fi
 
@@ -313,6 +313,20 @@ wait_for_restore() {
     last=$count
     sleep 0.2
   done
+  print -n -- "\r\e[K"
+}
+
+# continuum restores only when it sees no other process named "tmux" at start: the `tmux`
+# calls of autosave.sh and of wait_for_restore itself can make it skip the restore. Nothing
+# restored, none in progress and no session but `system`: run tmux-resurrect's restore here.
+restore_if_skipped() {
+  local restore=~/.tmux/plugins/tmux-resurrect/scripts/restore.sh
+  [[ -x $restore ]] || return 0
+  [[ $(tmux show -gqv @restored 2>/dev/null) == 1 ]] && return 0
+  pgrep -u "$UID" -f 'tmux-(resurrect/scripts/restore|continuum/scripts/continuum_restore)\.sh' >/dev/null && return 0
+  (( $(session_names | grep -cvx system) == 0 )) || return 0
+  print -n -- "${D}Restoring saved sessions…${X}"
+  tmux run-shell "$restore" &>/dev/null
   print -n -- "\r\e[K"
 }
 

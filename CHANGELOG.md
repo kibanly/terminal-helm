@@ -24,6 +24,11 @@ Para publicar una versión, mira [Publicar una versión](#publicar-una-versión)
   - El enlace para carpetas con espacios es ahora `~/.local/share/terminal-helm`. El antiguo se queda hasta que cierres las terminales abiertas, y `./uninstall.sh` lo quita.
 - El comando `terminal` y la variable `TERMINAL_SETUP` no cambian.
 
+### Arreglos
+- **Las sesiones guardadas vuelven siempre al abrir la primera terminal.** tmux-continuum se saltaba a veces la restauración: si veía otro proceso `tmux` al arrancar (las llamadas del autoguardado o de la propia espera), creía que había otro servidor. Ahora, si no se ha restaurado nada y no hay ninguna en marcha, la restauración se lanza igualmente.
+- **Al convertir una instalación con enlaces, tu `~/.zshrc.local` sigue cargándose después del repo**, como antes. Hasta ahora, la línea de terminal-helm quedaba al final y tus alias, `compdef` y funciones se cargaban antes que los del repo. Con `--dry-run`, el aviso de prompts o gestores de plugins que chocan revisa también ese fichero.
+- Tests: la detección de WSL ya no falla en macOS (el test usaba el `uname` real en vez del falso).
+
 ## [1.0.0] — 2026-11-04
 
 La primera versión etiquetada: todo lo que había hasta ahora.

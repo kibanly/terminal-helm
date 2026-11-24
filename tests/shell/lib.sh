@@ -68,7 +68,7 @@ mkdir -p "$T/bin"
 printf '#!/bin/sh\ncase $1 in -m) echo aarch64 ;; -s) echo Linux ;; esac\n' > "$T/bin/uname"; chmod +x "$T/bin/uname"
 ( PATH="$T/bin:$PATH"; unset WSL_DISTRO_NAME; detect_platform; echo "$ARCH" ) > "$T/arch"
 is "aarch64 is arm64" "$(cat "$T/arch")" arm64
-( WSL_DISTRO_NAME=Ubuntu; detect_platform; echo "$IS_WSL $OS_NAME" ) > "$T/wsl"
+( PATH="$T/bin:$PATH"; WSL_DISTRO_NAME=Ubuntu; detect_platform; echo "$IS_WSL $OS_NAME" ) > "$T/wsl"
 is "WSL seen" "$(cut -d' ' -f1 "$T/wsl")" 1
 is "and said in the name" "$(grep -c '(WSL)$' "$T/wsl")" 1
 

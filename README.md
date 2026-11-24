@@ -166,7 +166,7 @@ En WSL, «abrir en el navegador» y `open` usan el navegador y el Explorador **d
    - Ese `source` carga también los alias y las funciones del repo: no hace falta nada más.
    - `~/.tmux` sigue siendo una carpeta tuya: ahí van los plugins, los logs y las descripciones de sesión.
    - El prompt usa el `starship.toml` del repo (variable `STARSHIP_CONFIG`). La config de btop y la de micro se copian solo si no tienes una.
-   - Si tienes una instalación anterior (con enlaces al repo), la convierte: tu `~/.zshrc.local` pasa a ser tu `~/.zshrc`, y `~/.tmux` vuelve a ser una carpeta con tus plugins y logs.
+   - Si tienes una instalación anterior (con enlaces al repo), la convierte: tu `~/.zshrc.local` pasa a ser tu `~/.zshrc` (con la línea de terminal-helm al principio, para que se siga cargando después del repo, como antes), y `~/.tmux` vuelve a ser una carpeta con tus plugins y logs.
 4. **Plugins** de tmux y zsh, en las versiones probadas ([`install/plugins.lock`](install/plugins.lock)).
 5. **zsh como shell** de inicio (pregunta antes; en macOS ya lo es).
 6. **Comprobación**: [`install/doctor.sh`](install/doctor.sh) revisa versiones, configuración, plugins y fuente.
